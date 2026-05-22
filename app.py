@@ -128,6 +128,19 @@ st.markdown(
         color: #1e40af;
     }
 
+    button[kind="primary"] {
+        background: #fde2e2 !important;
+        color: #b42318 !important;
+        border: 1px solid #f6b4b4 !important;
+        box-shadow: 0 8px 20px rgba(180, 35, 24, 0.12) !important;
+    }
+
+    button[kind="primary"]:hover {
+        background: #fbd1d1 !important;
+        color: #912018 !important;
+        border-color: #ef9a9a !important;
+    }
+
     @media (max-width: 768px) {
         .main .block-container {
             padding-left: 1rem;
@@ -344,7 +357,7 @@ else:
 if selected_store is not None:
     make_store_card(selected_store)
 
-    if st.button("대상매장등록", width="stretch", type="primary"):
+    if st.button("대상매장등록", width="stretch"):
         new_target = pd.DataFrame([make_target_store_record(selected_store)])
         updated_targets = pd.concat([target_stores, new_target], ignore_index=True)
         save_target_stores(updated_targets)
@@ -443,7 +456,7 @@ else:
                 )
 
             with row_cols[8]:
-                update_clicked = st.button("업데이트", key=f"update_{target_id}", width="stretch", type="primary")
+                update_clicked = st.button("업데이트", key=f"update_{target_id}", width="stretch")
 
             with row_cols[9]:
                 delete_clicked = st.button("삭제", key=f"delete_{target_id}", width="stretch")
@@ -507,7 +520,7 @@ else:
                     )
 
                 with confirm_col3:
-                    confirm_delete = st.button("확인", key=f"confirm_delete_{target_id}", width="stretch")
+                    confirm_delete = st.button("확인", key=f"confirm_delete_{target_id}", width="stretch", type="primary")
 
                 if confirm_delete:
                     if confirm_choice == "YES":
