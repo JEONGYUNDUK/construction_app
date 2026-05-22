@@ -18,6 +18,14 @@ def normalize_marketing_team(marketing_team: str) -> str:
     return value
 
 
+def choose_store_data_source(csv_exists: bool, excel_exists: bool) -> str | None:
+    if csv_exists:
+        return "csv"
+    if excel_exists:
+        return "excel"
+    return None
+
+
 def build_period_text(start_date: date, end_date: date) -> str:
     return f"{start_date:%Y-%m-%d} ~ {end_date:%Y-%m-%d}"
 

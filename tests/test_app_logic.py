@@ -6,6 +6,7 @@ import pandas as pd
 from app_logic import (
     assign_display_numbers,
     build_period_text,
+    choose_store_data_source,
     find_store_by_code,
     find_store_by_name_and_code,
     get_agency_options,
@@ -292,6 +293,12 @@ class AppLogicTests(unittest.TestCase):
             ),
             "2026-05-22 ~ 2026-05-30",
         )
+
+    def test_choose_store_data_source_prefers_csv(self) -> None:
+        self.assertEqual(choose_store_data_source(csv_exists=True, excel_exists=True), "csv")
+
+    def test_choose_store_data_source_falls_back_to_excel(self) -> None:
+        self.assertEqual(choose_store_data_source(csv_exists=False, excel_exists=True), "excel")
 
     def test_get_selection_widget_keys_changes_with_reset_token(self) -> None:
         first_keys = get_selection_widget_keys(0)

@@ -8,6 +8,7 @@ import streamlit as st
 from app_logic import (
     assign_display_numbers,
     build_period_text,
+    choose_store_data_source,
     find_store_by_code,
     find_store_by_name_and_code,
     get_agency_options,
@@ -31,6 +32,7 @@ st.set_page_config(
 )
 
 EXCEL_FILE = Path("매장리스트.xlsx")
+CSV_FILE = Path("매장리스트.csv")
 TARGET_FILE = Path("construction_targets.csv")
 DATA_FILE = Path("construction_records.csv")
 
@@ -168,17 +170,35 @@ st.markdown(
 
 @st.cache_data(show_spinner=False)
 def load_store_data() -> pd.DataFrame:
-    if not EXCEL_FILE.exists():
-        st.error("매장리스트.xlsx 파일이 없습니다. app.py와 같은 폴더에 넣어 주세요.")
+    source = choose_store_data_source(CSV_FILE.exists(), EXCEL_FILE.exists())
+
+    if source is None:
+        st.error("매장리스트.csv 또는 매장리스트.xlsx 파일이 없습니다. app.py와 같은 폴더에 넣어 주세요.")
         st.stop()
 
-    df = pd.read_excel(
-        EXCEL_FILE,
-        dtype={
-            "매장코드": str,
-            "대리점코드": str,
-        },
-    )
+    if source == "csv":
+        df = pd.read_csv(
+            CSV_FILE,
+            dtype={
+                "매장코드": str,
+                "대리점코드": str,
+            },
+        )
+    else:
+        try:
+            df = pd.read_excel(
+                EXCEL_FILE,
+                dtype={
+                    "매장코드": str,
+                    "대리점코드": str,
+                },
+            )
+        except ImportError:
+            st.error(
+                "엑셀 파일을 읽기 위한 openpyxl 패키지를 불러오지 못했습니다. "
+                "배포 환경에서는 매장리스트.csv를 함께 사용해 주세요."
+            )
+            st.stop()
 
     missing_columns = [col for col in REQUIRED_COLUMNS if col not in df.columns]
 
